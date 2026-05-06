@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* Wide Medium */
+@font-face {
+    font-family: "Roc Grotesk";
+    src: url("./assets/font/Roc-Grotesk/wide-medium.otf") format("opentype");
+    font-weight: 500;
+    font-stretch: expanded;
+    font-style: normal;
+}
+
+/* Wide Bold */
+@font-face {
+    font-family: "Roc Grotesk";
+    src: url("./assets/font/Roc-Grotesk/wide-bold.otf") format("opentype");
+    font-weight: 700;
+    font-stretch: expanded;
+    font-style: normal;
+}
+
+/* Wide Light */
+@font-face {
+    font-family: "Roc Grotesk";
+    src: url("./assets/font/Roc-Grotesk/wide-light.otf") format("opentype");
+    font-weight: 300;
+    font-stretch: expanded;
+    font-style: normal;
+}
+
+/* Extrawide Bold */
+@font-face {
+    font-family: "Roc Grotesk";
+    src: url("./assets/font/Roc-Grotesk/extrawide-bold.otf") format("opentype");
+    font-weight: 700;
+    font-stretch: extra-expanded;
+    font-style: normal;
+}
+
+/* Standard Weights */
+@font-face {
+    font-family: "Roc Grotesk";
+    src: url("./assets/font/Roc-Grotesk/regular.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Roc Grotesk";
+    src: url("./assets/font/Roc-Grotesk/medium.otf") format("opentype");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Roc Grotesk";
+    src: url("./assets/font/Roc-Grotesk/light.otf") format("opentype");
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/font/Poppins-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/font/Poppins-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/font/Poppins-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/font/Poppins-Light.ttf") format("truetype");
+    font-weight: 300;
+    font-style: normal;
+}
+
+body {
+    font-family: "Roc Grotesk", sans-serif !important;
+}
+
+
+/* Correct CSS syntax in index.css */
+.cliptext {
+    font-family: "Poppins", sans-serif !important;
+    font-weight: 900; /* Use numeric values for bolder */
+}
+
+
+.default-header {
+    position: absolute;
+    top: 0;
+    padding: 63px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 22;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 180px 50px 64px 58px;
+    width: 650px;
+    height: 100%;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    isolation: isolate;
+}
+
+
+.prog-item {
+  transition: color 0.3s ease;
+  pointer-events: none; /* Prevents card overlap from blocking clicks */
+}
+
+
+.prog-right {
+        background: rgba(217, 217, 217, 0.1);
+        display: flex;
+        flex-direction: column;
+        padding-top: 50px;
+        backdrop-filter: blur(40px);
+        padding-inline: 75px;
+        justify-content: center;
+        width: 703px;
+    }
+    
+
+
+/* 0-------------------------------------------------- */
+
+
+
+.prog-item {
+    padding: 28px 0;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: all 0.4s ease;
+}
+
+.prog-item.active {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.prog-desc {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.5s ease;
+    padding-left: 56px;
+}
+
+.prog-item.active .prog-desc {
+    max-height: 200px;
+    opacity: 1;
+    padding-top: 14px;
+}
+
+
+/* ------------- */
+.container {
+  overflow-x: auto;
+  cursor: grab;
+  scroll-behavior: smooth;
+}
+
+.container.dragging {
+  cursor: grabbing;
+}
+
+.con-cards {
+  display: flex;
+  gap: 30px;
+  padding: 60px;
+}
+
+.card {
+  min-width: 320px;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.card.active {
+  opacity: 1;
+  transform: scale(1.05);
+}
