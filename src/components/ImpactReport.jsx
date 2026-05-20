@@ -1,76 +1,84 @@
 import React from 'react';
+import social from "../assets/social.mp4";
 
-import Socialvideo from '../assets/social.mp4';
-
-const ImpactReport = () => {
-
-
+const SocialSection = () => {
   return (
-    <section className="bg-[#0A0F1E] min-h-screen w-full py-20 px-10 flex flex-col items-center font-roc">
+    <section className="bg-[#0a0f1e] text-white flex flex-col pt-[72px] pb-[100px]">
       
-      {/* Top Small Label */}
-      <div className="mb-12">
-        <p className="text-[#14b8a6] uppercase tracking-[0.4em] text-[10px] font-bold opacity-60">
-          Impact Report 2026
-        </p>
-      </div>
+      {/* 1. Gradient Label */}
+      <p className="text-center tracking-[0.49em] text-[12px] font-normal uppercase bg-gradient-to-r from-[#0d594c] via-[#10676e] to-[#09414a] bg-clip-text text-transparent">
+        Impact Report 2025
+      </p>
 
-      {/* Main Image Section with Asymmetrical Text */}
-      <div className="relative w-full max-w-6xl mb-32">
+      {/* 2. Hero Section */}
+      <div className="relative w-3/4 min-h-[420px] px-12 py-5 mx-auto flex items-center justify-center">
         
-        {/* Left Side Text */}
-        <div className="absolute -left-12 top-10 z-10">
-          <p className="text-white/40 uppercase tracking-widest text-xs mb-1 ml-1">From</p>
-          <h2 className="text-white text-6xl font-black tracking-tighter uppercase leading-none">
+        {/* Left Text Layer */}
+        <div className="absolute top-[15%] left-[-10%] z-10 flex flex-col">
+          <span className="font-light text-[clamp(22px,3vw,30px)] tracking-[0.12em] text-white/85 leading-none uppercase">
+            From
+          </span>
+          <span className="font-medium text-[clamp(40px,6vw,56px)] tracking-[0.04em] text-white leading-none uppercase" style={{ fontStretch: 'expanded' }}>
             Abu Dhabi
-          </h2>
+          </span>
         </div>
 
-        {/* The Image Container */}
-        <div className="w-full h-[350px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                      <video 
-                src={Socialvideo } autoPlay loop muted playsInline 
-                className="w-full h-full object-cover scale-150 brightness-110"
-              />
+        {/* Video Wrapper */}
+        <div className="w-full h-[300px] rounded-[20px] overflow-hidden aspect-video bg-[#111827] shadow-2xl">
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="w-full h-full object-cover"
+          >
+            <source src={social} type="video/mp4" />
+          </video>
         </div>
 
-        {/* Right Side Text */}
-        <div className="absolute -right-8 bottom-10 z-10 text-right">
-          <p className="text-white/40 uppercase tracking-widest text-xs mb-1 mr-1">To the</p>
-          <h2 className="text-white text-6xl font-black tracking-tighter uppercase leading-none">
+        {/* Right Text Layer */}
+        <div className="absolute bottom-[35%] right-[-10%] flex flex-col items-end">
+          <span className="font-light text-[clamp(22px,3vw,30px)] tracking-[0.12em] text-white/85 leading-none uppercase">
+            To the
+          </span>
+          <span className="font-medium text-[clamp(40px,6vw,56px)] tracking-[0.04em] text-white leading-none uppercase" style={{ fontStretch: 'expanded' }}>
             World
-          </h2>
+          </span>
         </div>
       </div>
 
-      {/* Bottom Content Area */}
-      <div className="w-full max-w-6xl">
-        {/* Decorative Divider Line */}
-        <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#14b8a6]/30 to-transparent mb-16"></div>
+      {/* 3. Gradient Divider */}
+      <div className="w-[90%] md:w-[70%] h-px mx-auto bg-gradient-to-r from-[#056145] via-[#00b0f5] to-white/30 border-none" />
 
-        <div className="flex justify-between items-start">
-          {/* Innovation Bracket Tag */}
-          <div className="relative px-8 py-2 border-l border-r border-[#14b8a6]/30">
-            <div className="absolute top-0 left-0 w-2 h-[1px] bg-[#14b8a6]/30"></div>
-            <div className="absolute bottom-0 left-0 w-2 h-[1px] bg-[#14b8a6]/30"></div>
-            <div className="absolute top-0 right-0 w-2 h-[1px] bg-[#14b8a6]/30"></div>
-            <div className="absolute bottom-0 right-0 w-2 h-[1px] bg-[#14b8a6]/30"></div>
-            <span className="text-white text-xs uppercase tracking-widest opacity-80 font-medium">
+      {/* 4. Bottom Content */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center  px-[60px] lg:px-[200px] py-12 gap-10">
+        
+        {/* Innovation Bracket Tag */}
+        <div className="inline-flex items-center justify-center">
+          <div className="relative px-10 py-5">
+            {/* Top-Left Bracket */}
+            <div className="absolute top-0 left-0 w-[18px] h-[18px] border-t border-l border-[#16445b]" />
+            {/* Bottom-Right Bracket */}
+            <div className="absolute bottom-0 right-0 w-[18px] h-[18px] border-b border-r border-[#16445b]" />
+            
+            <span className="relative font-light text-white font-['Poppins']">
               Innovation
+              {/* Top-Right Bracket */}
+              <div className="absolute top-[-20px] right-[-40px] w-[18px] h-[18px] border-t border-r border-[#16445b]" />
+              {/* Bottom-Left Bracket */}
+              <div className="absolute bottom-[-20px] left-[-40px] w-[18px] h-[18px] border-b border-l border-[#16445b]" />
             </span>
           </div>
-
-          {/* Right-aligned description */}
-          <div className="max-w-md">
-            <p className="text-white/70 text-sm leading-relaxed font-light">
-              Abu Dhabi's emergence as a global technology hub is no longer a vision, 
-              it is a reality taking shape through innovation, ambition, and bold execution.
-            </p>
-          </div>
         </div>
+
+        {/* Description */}
+        <p className="font-['Poppins'] font-light text-white leading-[130%] max-w-[500px]">
+          Abu Dhabi's emergence as a global technology hub is no longer a vision, it is a reality taking
+          shape through innovation, ambition, and bold execution.
+        </p>
       </div>
     </section>
   );
 };
 
-export default ImpactReport;
+export default SocialSection;

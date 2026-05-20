@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from "react";
+import backgroundImg from "../assets/images/new-img-3.jpg";
+
 
 const sectorsData = [
   {
@@ -80,8 +82,8 @@ export default function SectorsSection() {
       <div
         className="relative pt-[364px] bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url(https://sandboxhub71.trianglemena.xyz/impact-report/2026/images/sectors.png)",
+            backgroundImage: `url(${backgroundImg})`,
+            
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-[#0d1117]/30 to-[#0d1117]/95"></div>
