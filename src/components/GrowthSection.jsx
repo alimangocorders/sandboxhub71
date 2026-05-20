@@ -110,7 +110,7 @@ const GrowthSection = () => {
           ref={titleRef}
           className="
             font-medium
-            text-[36px]
+            text-[28px]
             md:text-[56px]
             leading-tight
             uppercase

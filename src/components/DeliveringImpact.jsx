@@ -18,17 +18,17 @@ const DeliveringImpact = () => {
       overlapped by the pinned ImpactSection above it or ProgressSection below.
     */
     <section
-      className="bg-[#0d1117] text-white py-[118px]"
+      className="bg-[#0d1117] text-white py-16 sm:py-24 lg:py-[118px] overflow-hidden"
       style={{ position: 'relative', zIndex: 1, isolation: 'isolate' }}
     >
-      <div className="container mx-auto px-6 md:px-16">
-        <div className="flex flex-col">
+      <div className="container mx-auto px-5 xs:px-6 md:px-16 w-full box-border">
+        <div className="flex flex-col w-full">
           <motion.h3
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp(0.1)}
-            className="text-4xl md:text-5xl lg:text-[56px] font-medium uppercase leading-[1.1] mb-10 tracking-tight md:max-w-[80%] [font-stretch:expanded]"
+            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-medium uppercase leading-[1.2] md:leading-[1.1] mb-6 md:mb-10 tracking-tight w-full md:max-w-[80%] [font-stretch:expanded]"
           >
             Delivering impact in critical and <br className="hidden md:block" /> emerging sectors
           </motion.h3>
@@ -38,7 +38,7 @@ const DeliveringImpact = () => {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp(0.3)}
-            className="font-light text-base md:text-lg leading-relaxed text-gray-300 md:max-w-[40%] font-poppins"
+            className="font-light text-sm xs:text-base md:text-lg leading-relaxed text-gray-300 w-full md:max-w-[50%] lg:max-w-[40%] font-poppins"
           >
             Hub71 plays a strategic role in advancing priority and emerging tech
             sectors by expanding specialist ecosystems and forging partnerships

@@ -115,22 +115,11 @@ body {
     align-items: center;
 }
 
-.hero-left {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 180px 50px 64px 58px;
-    width: 650px;
-    height: 100%;
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    isolation: isolate;
-}
 
 
 .prog-item {
   transition: color 0.3s ease;
-  pointer-events: none; /* Prevents card overlap from blocking clicks */
+  pointer-events: none; 
 }
 
 

@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import progressimg from "../assets/images/prog.png";
+import { CloudSun, Sparkles, MonitorPlay } from 'lucide-react';
 
 // ── Do NOT call gsap.registerPlugin here — App.jsx handles it globally
 
@@ -500,26 +501,17 @@ stRef.current = ScrollTrigger.create({
               </div>
 
               <div className="prog-icon-tl">
-                <img
-                  src="https://sandboxhub71.trianglemena.xyz/impact-report/2026/images/CloudSun.svg"
-                  alt="Cloud"
-                />
+                    <CloudSun className="w-8 h-8"  />
               </div>
               <div className="prog-icon-line-t1" />
               <div className="prog-icon-line-t2" />
               <div className="prog-icon-line-t3" />
 
               <div className="prog-icon-bl">
-                <img
-                  src="https://sandboxhub71.trianglemena.xyz/impact-report/2026/images/MonitorPlay.svg"
-                  alt="Monitor"
-                />
+                   <MonitorPlay className="w-8 h-8"  />
               </div>
               <div className="prog-spark">
-                <img
-                  src="https://sandboxhub71.trianglemena.xyz/impact-report/2026/images/spark.svg"
-                  alt="Spark"
-                />
+               <Sparkles className="w-8 h-8 text-green-400" />
               </div>
             </div>
           </div>
