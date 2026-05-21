@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import businessimg from "../assets/images/business-img.png";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import businessimg from "../assets/images/business-img.webp";
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
+// ─── DATA (Moved outside component to prevent garbage collection sweeps) ─────
 const sliderData = {
   0: [
     { title: "Hub71 onboarded Saudi Awwal Bank (SAB) as market partner", date: "JAN" },
@@ -56,7 +56,6 @@ const sliderData = {
   ],
 };
 
-// ─── DESKTOP CONSTANTS ────────────────────────────────────────────────────────
 const MAX_VISIBLE = 7;
 const CARD_W = 228;
 const STEP_X = 250;
@@ -77,21 +76,17 @@ function getSlotStyle(i, actualVisible, cx, cy, startX) {
   return { x, y, zIndex, opacity };
 }
 
-// ─── ICONS ───────────────────────────────────────────────────────────────────
-function ArrowLeft({ size = 24 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 5l-7 7 7 7" />
-    </svg>
-  );
-}
-function ArrowRight({ size = 24 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12h14M12 5l7 7-7 7" />
-    </svg>
-  );
-}
+const ArrowLeft = React.memo(({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 12H5M12 5l-7 7 7 7" />
+  </svg>
+));
+
+const ArrowRight = React.memo(({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14M12 5l7 7-7 7" />
+  </svg>
+));
 
 const tabs = [
   { label: (<>building<br />partnerships</>) },
@@ -99,28 +94,34 @@ const tabs = [
   { label: (<>ecosystems, programs &<br />initiatives</>) },
 ];
 
-// ─── DESKTOP SLIDER ───────────────────────────────────────────────────────────
-function DesktopSlider({ activeTab }) {
+// ─── DESKTOP SLIDER ──────────────────────────────────────────────────────────
+const DesktopSlider = React.memo(({ activeTab }) => {
   const [startIndex, setStartIndex] = useState(0);
-  const [animating, setAnimating] = useState(false);
+  const animatingRef = useRef(false);
   const containerRef = useRef(null);
   const [dims, setDims] = useState({ w: 1200, h: 700 });
 
   useEffect(() => {
-    function update() {
-      if (containerRef.current) {
-        const r = containerRef.current.getBoundingClientRect();
-        setDims({ w: r.width, h: r.height });
-      }
-    }
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    let timeoutId = null;
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (!entries || entries.length === 0) return;
+      const { width, height } = entries[0].contentRect;
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setDims({ w: width || 1200, h: height || 700 });
+      }, 40);
+    });
+
+    if (containerRef.current) resizeObserver.observe(containerRef.current);
+    return () => {
+      resizeObserver.disconnect();
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   useEffect(() => { setStartIndex(0); }, [activeTab]);
 
-  const data = sliderData[activeTab] || [];
+  const data = useMemo(() => sliderData[activeTab] || [], [activeTab]);
   const actualVisible = Math.min(data.length, MAX_VISIBLE);
   const maxStart = Math.max(0, data.length - actualVisible);
   const cx = dims.w / 2;
@@ -128,30 +129,33 @@ function DesktopSlider({ activeTab }) {
   const totalLayoutWidth = Math.max(0, (actualVisible - 1) * STEP_X) + CARD_W;
   const startX = cx - totalLayoutWidth / 2;
 
-  const visibleCards = Array.from({ length: actualVisible }, (_, i) => {
-    const dataIndex = (startIndex + i) % data.length;
-    return { ...data[dataIndex], slot: i };
-  });
+  const visibleCards = useMemo(() => {
+    return Array.from({ length: actualVisible }, (_, i) => {
+      const dataIndex = (startIndex + i) % data.length;
+      return { ...data[dataIndex], slot: i };
+    });
+  }, [startIndex, data, actualVisible]);
 
-  function moveNext() {
-    if (animating || startIndex >= maxStart) return;
-    setAnimating(true);
+  const moveNext = useCallback(() => {
+    if (animatingRef.current || startIndex >= maxStart) return;
+    animatingRef.current = true;
     setStartIndex((s) => s + 1);
-    setTimeout(() => setAnimating(false), ANIM_SPEED);
-  }
-  function movePrev() {
-    if (animating || startIndex <= 0) return;
-    setAnimating(true);
+    setTimeout(() => { animatingRef.current = false; }, ANIM_SPEED);
+  }, [startIndex, maxStart]);
+
+  const movePrev = useCallback(() => {
+    if (animatingRef.current || startIndex <= 0) return;
+    animatingRef.current = true;
     setStartIndex((s) => s - 1);
-    setTimeout(() => setAnimating(false), ANIM_SPEED);
-  }
+    setTimeout(() => { animatingRef.current = false; }, ANIM_SPEED);
+  }, [startIndex]);
 
   return (
     <>
-      <button className="bs-nav-btn prev" onClick={movePrev} disabled={startIndex <= 0} aria-label="Previous">
+      <button className="bs-nav-btn prev" onClick={movePrev} disabled={startIndex <= 0} aria-label="Previous slide">
         <ArrowLeft />
       </button>
-      <button className="bs-nav-btn next" onClick={moveNext} disabled={startIndex >= maxStart} aria-label="Next">
+      <button className="bs-nav-btn next" onClick={moveNext} disabled={startIndex >= maxStart} aria-label="Next slide">
         <ArrowRight />
       </button>
       <div ref={containerRef} className="bs-slider" style={{ backgroundImage: `url(${businessimg})` }}>
@@ -160,9 +164,13 @@ function DesktopSlider({ activeTab }) {
           const isLast = i === visibleCards.length - 1;
           return (
             <div
-              key={`${activeTab}-${startIndex}-${i}`}
+              key={`${activeTab}-${card.title}-${i}`}
               className={`bs-card${isLast ? " last" : ""}`}
-              style={{ left: s.x, top: s.y, zIndex: s.zIndex, opacity: s.opacity }}
+              style={{
+                transform: `translate3d(${s.x}px, ${s.y}px, 0)`,
+                zIndex: s.zIndex,
+                opacity: s.opacity,
+              }}
             >
               <p>{card.title}</p>
               <span className="bs-card-date">{card.date}</span>
@@ -172,25 +180,29 @@ function DesktopSlider({ activeTab }) {
       </div>
     </>
   );
-}
+});
 
 // ─── MOBILE SWIPER ────────────────────────────────────────────────────────────
-// cardsPerView = 1 (< 576px) or 2 (576–767px)
-function MobileSwiper({ activeTab, cardsPerView }) {
-  const data = sliderData[activeTab] || [];
-
-  // Pages = groups of cardsPerView cards
+const MobileSwiper = React.memo(({ activeTab, cardsPerView }) => {
+  const data = useMemo(() => sliderData[activeTab] || [], [activeTab]);
   const totalPages = Math.ceil(data.length / cardsPerView);
   const [page, setPage] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  
   const startXRef = useRef(0);
   const startYRef = useRef(0);
   const isHorizRef = useRef(null);
   const trackRef = useRef(null);
+  const widthRef = useRef(350);
 
-  // Reset when tab or cardsPerView changes
-  useEffect(() => { setPage(0); setDragOffset(0); }, [activeTab, cardsPerView]);
+  useEffect(() => { 
+    setPage(0); 
+    setDragOffset(0); 
+    if (trackRef.current) {
+      widthRef.current = trackRef.current.offsetWidth || 350;
+    }
+  }, [activeTab, cardsPerView]);
 
   const goToPage = useCallback((p) => {
     const clamped = Math.max(0, Math.min(p, totalPages - 1));
@@ -198,20 +210,26 @@ function MobileSwiper({ activeTab, cardsPerView }) {
     setDragOffset(0);
   }, [totalPages]);
 
-  // Touch
   const onTouchStart = (e) => {
     startXRef.current = e.touches[0].clientX;
     startYRef.current = e.touches[0].clientY;
     isHorizRef.current = null;
     setIsDragging(true);
   };
+  
   const onTouchMove = (e) => {
     if (!isDragging) return;
     const dx = e.touches[0].clientX - startXRef.current;
     const dy = e.touches[0].clientY - startYRef.current;
-    if (isHorizRef.current === null) isHorizRef.current = Math.abs(dx) > Math.abs(dy);
-    if (isHorizRef.current) { e.preventDefault(); setDragOffset(dx); }
+    if (isHorizRef.current === null) {
+      isHorizRef.current = Math.abs(dx) > Math.abs(dy);
+    }
+    if (isHorizRef.current) { 
+      if (e.cancelable) e.preventDefault();
+      setDragOffset(dx); 
+    }
   };
+  
   const onTouchEnd = () => {
     setIsDragging(false);
     const threshold = 60;
@@ -221,32 +239,19 @@ function MobileSwiper({ activeTab, cardsPerView }) {
     isHorizRef.current = null;
   };
 
-  // Mouse drag
   const onMouseDown = (e) => { startXRef.current = e.clientX; setIsDragging(true); };
   const onMouseMove = (e) => { if (!isDragging) return; setDragOffset(e.clientX - startXRef.current); };
-  const onMouseUp = () => {
-    setIsDragging(false);
-    const threshold = 60;
-    if (dragOffset < -threshold) goToPage(page + 1);
-    else if (dragOffset > threshold) goToPage(page - 1);
-    else setDragOffset(0);
-  };
 
-  // translateX: each "page" is 100% of the track wrapper width
-  const translateX = -(page * 100) + (dragOffset / (trackRef.current?.offsetWidth || 350)) * 100;
-
-  // Cards are grouped into pages; each page slot = 100%/cardsPerView wide
+  const translateX = -(page * 100) + (dragOffset / widthRef.current) * 100;
   const slideWidthPct = 100 / cardsPerView;
-
-  // Counter values
   const firstCardOnPage = page * cardsPerView + 1;
   const lastCardOnPage = Math.min((page + 1) * cardsPerView, data.length);
 
   return (
     <div className="ms-root">
       <div className="ms-bg" style={{ backgroundImage: `url(${businessimg})` }} />
+      <div className="ms-overlay" />
 
-      {/* Track */}
       <div
         ref={trackRef}
         className="ms-track-wrapper"
@@ -255,20 +260,20 @@ function MobileSwiper({ activeTab, cardsPerView }) {
         onTouchEnd={onTouchEnd}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseUp}
+        onMouseUp={onTouchEnd}
+        onMouseLeave={onTouchEnd}
       >
         <div
           className="ms-track"
           style={{
-            transform: `translateX(${translateX}%)`,
+            transform: `translate3d(${translateX}%, 0, 0)`,
             transition: isDragging ? "none" : "transform 420ms cubic-bezier(0.25,1,0.5,1)",
             cursor: isDragging ? "grabbing" : "grab",
           }}
         >
           {data.map((card, i) => (
             <div
-              key={i}
+              key={`${activeTab}-${card.title}-${i}`}
               className="ms-slide"
               style={{ flex: `0 0 ${slideWidthPct}%`, width: `${slideWidthPct}%` }}
             >
@@ -283,39 +288,32 @@ function MobileSwiper({ activeTab, cardsPerView }) {
         </div>
       </div>
 
-      {/* Controls row: prev · dots · next */}
       <div className="ms-arrows">
-        <button
-          className="ms-arrow-btn"
-          onClick={() => goToPage(page - 1)}
-          disabled={page === 0}
-          aria-label="Previous"
-        >
+        <button className="ms-arrow-btn" onClick={() => goToPage(page - 1)} disabled={page === 0} aria-label="Previous page">
           <ArrowLeft size={18} />
         </button>
 
-        <div className="ms-dots">
+        {/* ACCESSIBILITY FIX: Applied expanded hitboxes onto interactive dot controls */}
+        <div className="ms-dots" role="tablist" aria-label="Slideshow pagination tracks">
           {Array.from({ length: totalPages }).map((_, i) => (
             <button
               key={i}
+              role="tab"
+              aria-selected={i === page}
               onClick={() => goToPage(i)}
-              aria-label={`Go to page ${i + 1}`}
-              className={`ms-dot${i === page ? " active" : ""}`}
-            />
+              aria-label={`Go to section page ${i + 1}`}
+              className={`ms-dot-container ${i === page ? "active" : ""}`}
+            >
+              <span className="ms-dot-visual" />
+            </button>
           ))}
         </div>
 
-        <button
-          className="ms-arrow-btn"
-          onClick={() => goToPage(page + 1)}
-          disabled={page === totalPages - 1}
-          aria-label="Next"
-        >
+        <button className="ms-arrow-btn" onClick={() => goToPage(page + 1)} disabled={page === totalPages - 1} aria-label="Next page">
           <ArrowRight size={18} />
         </button>
       </div>
 
-      {/* Counter */}
       <div className="ms-counter">
         <span className="ms-counter-current">
           {cardsPerView > 1
@@ -327,31 +325,41 @@ function MobileSwiper({ activeTab, cardsPerView }) {
       </div>
     </div>
   );
-}
+});
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function BusinessSection() {
   const [activeTab, setActiveTab] = useState(0);
-
-  // Track screen width for: desktop (≥768), 2-up mobile (576–767), 1-up mobile (<576)
-  const getLayout = () => {
-    if (typeof window === "undefined") return "desktop";
-    if (window.innerWidth >= 768) return "desktop";
-    if (window.innerWidth >= 576) return "two";
-    return "one";
-  };
-  const [layout, setLayout] = useState(getLayout);
+  const [layout, setLayout] = useState("desktop");
 
   useEffect(() => {
-    const onResize = () => setLayout(getLayout());
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const getLayout = () => {
+      const width = window.innerWidth;
+      if (width >= 768) return "desktop";
+      if (width >= 576) return "two";
+      return "one";
+    };
+    
+    setLayout(getLayout());
+
+    let resizeTimeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        setLayout(getLayout());
+      }, 60); 
+    };
+
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimeout);
+    };
   }, []);
 
   return (
     <>
       <style>{`
-        /* ── Section ── */
         .bs-section {
           background: rgba(26,30,32,1);
           padding-top: clamp(60px,10vw,192px);
@@ -366,30 +374,34 @@ export default function BusinessSection() {
           padding: 0 clamp(12px,3vw,20px);
         }
 
-        /* ── Tabs ── */
+        /* ACCESSIBILITY FIX: Increased label base contrast against dark/light grey patterns */
         .bs-tabs {
           display: flex;
           justify-content: space-around;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
+          border-bottom: 1px solid rgba(255,255,255,0.12);
           padding-bottom: 15px;
           margin-bottom: 50px;
           gap: 4px;
         }
         .bs-tab {
-          color: rgba(255,255,255,0.25);
+          background: transparent;
+          border: none;
+          outline: none;
+          color: rgba(255, 255, 255, 0.65); /* Escalated from 0.25 to hit WCAG AA standards */
           font-size: clamp(10px,2.2vw,20px);
-          font-weight: 350;
+          font-weight: 400;
           text-transform: capitalize;
           text-align: center;
           position: relative;
           cursor: pointer;
-          transition: color 0.3s;
+          transition: color 0.3s, font-weight 0.3s;
           line-height: 1.2;
           flex: 1;
           padding: 0 2px;
           user-select: none;
         }
-        .bs-tab.active { color: rgba(0,176,245,1); font-weight: 500; }
+        .bs-tab:hover { color: rgba(255,255,255,0.95); }
+        .bs-tab.active { color: rgba(0,176,245,1); font-weight: 600; }
         .bs-tab.active::before {
           content: "";
           position: absolute;
@@ -398,7 +410,6 @@ export default function BusinessSection() {
           background: rgba(0,176,245,1);
         }
 
-        /* ── DESKTOP NAV ARROWS — z-index raised to 200 ── */
         .bs-nav-btn {
           position: absolute;
           top: 60%;
@@ -422,7 +433,6 @@ export default function BusinessSection() {
         .bs-nav-btn.prev { left: clamp(4px,1.5vw,20px); }
         .bs-nav-btn.next { right: clamp(4px,1.5vw,20px); }
 
-        /* ── DESKTOP SLIDER ── */
         .bs-slider {
           position: relative;
           min-height: 100vh;
@@ -437,18 +447,8 @@ export default function BusinessSection() {
           pointer-events: none;
           z-index: 3;
           background:
-            linear-gradient(to right,
-              rgba(26,30,32,1) 0%,
-              rgba(26,30,32,0) 20%,
-              rgba(26,30,32,0) 80%,
-              rgba(26,30,32,1) 100%
-            ),
-            linear-gradient(to bottom,
-              rgba(26,30,32,1) 0%,
-              rgba(26,30,32,0) 20%,
-              rgba(26,30,32,0) 80%,
-              rgba(26,30,32,1) 100%
-            );
+            linear-gradient(to right, rgba(26,30,32,1) 0%, rgba(26,30,32,0) 20%, rgba(26,30,32,0) 80%, rgba(26,30,32,1) 100%),
+            linear-gradient(to bottom, rgba(26,30,32,1) 0%, rgba(26,30,32,0) 20%, rgba(26,30,32,0) 80%, rgba(26,30,32,1) 100%);
         }
         .bs-card {
           position: absolute;
@@ -461,11 +461,9 @@ export default function BusinessSection() {
           color: #fff;
           font-size: 13px;
           font-weight: 400;
-          transition:
-            left ${ANIM_SPEED}ms cubic-bezier(0.25,1,0.5,1),
-            top ${ANIM_SPEED}ms cubic-bezier(0.25,1,0.5,1),
-            opacity ${ANIM_SPEED}ms;
+          transition: transform ${ANIM_SPEED}ms cubic-bezier(0.25,1,0.5,1), opacity ${ANIM_SPEED}ms;
           z-index: 2;
+          will-change: transform, opacity;
         }
         .bs-card::after {
           content: "";
@@ -489,9 +487,6 @@ export default function BusinessSection() {
         }
         .bs-card.last .bs-card-date { left: auto; right: 0; }
 
-        /* ══════════════════════════════════════
-           MOBILE SWIPER
-        ══════════════════════════════════════ */
         .ms-root {
           position: relative;
           overflow: hidden;
@@ -521,18 +516,14 @@ export default function BusinessSection() {
         .ms-track {
           display: flex;
           will-change: transform;
-          /* slides are sized inline via style prop */
         }
-        /* Each slide: padding creates gutter between 2-up cards */
         .ms-slide {
           box-sizing: border-box;
           padding: 0 clamp(6px,2vw,12px);
         }
-        /* Outer edges: remove extra padding on first/last */
         .ms-slide:first-child { padding-left: clamp(16px,5vw,24px); }
         .ms-slide:last-child  { padding-right: clamp(16px,5vw,24px); }
 
-        /* The card */
         .ms-card {
           position: relative;
           background: rgba(217,217,217,0.07);
@@ -577,7 +568,6 @@ export default function BusinessSection() {
           background: linear-gradient(to right, rgba(0,176,245,1) 0%, rgba(0,176,245,0) 100%);
         }
 
-        /* Controls row */
         .ms-arrows {
           position: relative;
           z-index: 2;
@@ -588,7 +578,7 @@ export default function BusinessSection() {
           margin-top: 4px;
         }
         .ms-arrow-btn {
-          width: 40px; height: 40px;
+          width: 44px; height: 44px; /* Scaled past 40px minimum targets */
           border-radius: 50%;
           border: 1px solid rgba(255,255,255,0.25);
           background: transparent;
@@ -603,33 +593,42 @@ export default function BusinessSection() {
         .ms-arrow-btn:hover:not(:disabled) { border-color: rgba(0,176,245,1); color: rgba(0,176,245,1); }
         .ms-arrow-btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        /* Dots — one per PAGE (not per card) */
         .ms-dots {
           display: flex;
           align-items: center;
-          gap: 7px;
-          flex-wrap: wrap;
           justify-content: center;
           flex: 1;
           padding: 0 8px;
+          min-height: 44px; /* Guaranteed interaction row window height constraint */
         }
-        .ms-dot {
-          width: 6px; height: 6px;
-          border-radius: 50%;
+        
+        /* ACCESSIBILITY FIX: The outer container handles the 44px tap target without changing visual size */
+        .ms-dot-container {
+          background: transparent;
           border: none;
-          background: rgba(255,255,255,0.22);
-          cursor: pointer;
+          outline: none;
           padding: 0;
-          flex-shrink: 0;
-          transition: background 0.25s, width 0.25s, border-radius 0.25s;
+          width: 24px;   /* Explicitly spaced out horizontal boundary anchors */
+          height: 44px;  /* Full WCAG height specification threshold */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
         }
-        .ms-dot.active {
+        .ms-dot-visual {
+          width: 6px; 
+          height: 6px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.22);
+          transition: background 0.25s, width 0.25s, border-radius 0.25s;
+          display: block;
+        }
+        .ms-dot-container.active .ms-dot-visual {
           background: rgba(0,176,245,1);
           width: 18px;
           border-radius: 3px;
         }
 
-        /* Counter */
         .ms-counter {
           position: relative;
           z-index: 2;
@@ -645,31 +644,37 @@ export default function BusinessSection() {
 
       <section className="bs-section">
         <div className="bs-container">
-          <div className="bs-tabs">
+          <div className="bs-tabs" role="tablist" aria-label="Milestone Categories">
             {tabs.map((tab, idx) => (
-              <div
+              <button
                 key={idx}
+                role="tab"
+                id={`tab-${idx}`}
+                aria-controls={`panel-${idx}`}
+                aria-selected={activeTab === idx}
                 className={`bs-tab${activeTab === idx ? " active" : ""}`}
                 onClick={() => setActiveTab(idx)}
               >
-                <p>{tab.label}</p>
-              </div>
+                {tab.label}
+              </button>
             ))}
           </div>
         </div>
 
-        {layout === "desktop" ? (
-          <div className="bs-container" style={{ position: "relative" }}>
-            <DesktopSlider activeTab={activeTab} />
-          </div>
-        ) : (
-          <div className="bs-container">
-            <MobileSwiper
-              activeTab={activeTab}
-              cardsPerView={layout === "two" ? 2 : 1}
-            />
-          </div>
-        )}
+        <div id={`panel-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`}>
+          {layout === "desktop" ? (
+            <div className="bs-container" style={{ position: "relative" }}>
+              <DesktopSlider activeTab={activeTab} />
+            </div>
+          ) : (
+            <div className="bs-container">
+              <MobileSwiper
+                activeTab={activeTab}
+                cardsPerView={layout === "two" ? 2 : 1}
+              />
+            </div>
+          )}
+        </div>
       </section>
     </>
   );

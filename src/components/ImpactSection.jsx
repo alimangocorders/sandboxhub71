@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import stepsimg from "../assets/images/counter-img.png";
+import stepsimg from "../assets/images/counter-img.webp";
 
 const STEPS = [
   {

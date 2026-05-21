@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import collabimg from '../assets/images/new-img-2.jpg';
+import collabimg from '../assets/images/new-img-2.webp';
 import { MoveRight } from 'lucide-react';
 
 const SLIDE_TIME = 5000;

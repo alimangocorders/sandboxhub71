@@ -1,10 +1,75 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sandboxhub</title>
+    <meta
+      name="description"
+      content="Hub71 Impact Report: Discover how we leverage innovation to drive meaningful impact and shape a future-focused global startup ecosystem."
+    />
+    <title>Hub71 Impact Report</title>
+
+    <!--
+      PRECONNECT — opens the TCP + TLS handshake to Google Fonts origins
+      before the browser discovers the actual font requests.
+      Saves ~300-500 ms on the critical font chain.
+      Keep this even if you self-host: remove once self-hosting is complete.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!--
+      FONT PRELOADS — only preload the 2 weights used above the fold.
+      Preloading all 6 variants wastes bandwidth on weights that load
+      after first paint anyway.
+
+      If self-hosting (recommended): point href at your local woff2 files.
+        e.g. href="/fonts/poppins/poppins-400.woff2"
+
+      If still on Google Fonts CDN: remove these preload tags and rely
+      on the preconnect above instead (CDN URLs change and preloading a
+      stale URL wastes a connection slot).
+    -->
+    <link
+      rel="preload"
+      href="/fonts/poppins/poppins-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/poppins/poppins-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!--
+      NON-BLOCKING FONT CSS — media="print" trick defers the stylesheet
+      until after first paint. The onload callback switches it to "all"
+      so styles apply once the page is interactive. The <noscript> fallback
+      covers the rare JS-disabled case.
+    -->
+    <link
+      rel="stylesheet"
+      href="./src/fonts.css"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="./src/fonts.css" />
+    </noscript>
+
+    <!--
+      NOTE: The Vite build plugin (html-transform-perf-optimization in
+      vite.config.js) automatically converts the generated
+        <link rel="stylesheet" crossorigin href="/assets/index-*.css">
+        <link rel="stylesheet" crossorigin href="/assets/vendor-*.css">
+      tags into the same media="print" pattern at build time.
+      No manual edits needed for the built CSS chunks.
+    -->
   </head>
   <body>
     <div id="root"></div>

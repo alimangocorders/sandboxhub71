@@ -1,5 +1,5 @@
 import React from 'react';
-import commuunitybg from '../assets/images/gradiant-bg.jpg';
+import commuunitybg from '../assets/images/gradiant-bg.webp';
 
 const kbData = [
   { number: "33", label: "Fireside Chats", opacity: "bg-white/100" },

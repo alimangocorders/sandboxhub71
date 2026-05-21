@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import progressimg from "../assets/images/prog.png";
+import progressimg from "../assets/images/prog.webp";
 import { CloudSun, Sparkles, MonitorPlay } from 'lucide-react';
 
 // ── Do NOT call gsap.registerPlugin here — App.jsx handles it globally

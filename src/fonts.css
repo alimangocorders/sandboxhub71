@@ -1,0 +1,21 @@
+
+/* Regular */
+@font-face {
+    font-family: "Roc Grotesk";
+    src: local("Roc Grotesk Regular"),
+         url("../public/font/Roc-Grotesk/regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Poppins Regular */
+@font-face {
+    font-family: "Poppins";
+    src: local("Poppins Regular"),
+         local("Poppins-Regular"),
+         url("../public/font/Poppins-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
