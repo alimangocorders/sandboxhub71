@@ -13,7 +13,7 @@ const kbData = [
 
 const KnowledgeBuilding = () => {
   return (
-    <div className="py-10 sm:py-12 px-4 sm:px-6 lg:px-10">
+    <div className="bg-white py-10 sm:py-12 px-4 sm:px-6 lg:px-10">
 
       {/* Title Section */}
       <h1

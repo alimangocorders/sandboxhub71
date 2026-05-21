@@ -51,7 +51,7 @@ const Footer = () => {
   return (
     <footer 
       ref={footerRef} 
-      className="relative w-full min-h-[85vh] overflow-hidden mt-10 sm:mt-20 font-[Poppins]"
+      className="relative w-full min-h-[85vh] overflow-hidden sm:mt-20 font-[Poppins]"
     >
       {/* BACKGROUND VIDEO */}
       {shouldLoadVideo ? (

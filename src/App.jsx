@@ -128,7 +128,7 @@ const LazySection = memo(({ children, height = "min-h-[60vh]", rootMargin = "300
   return (
     <Suspense
       fallback={
-        <div className={`w-full ${height}  opacity-0`} />
+        <div className={`w-full ${height} bg-[#14151d] opacity-0`} />
       }
     >
       {children}
@@ -182,7 +182,7 @@ const App = () => {
   }, []);
 
   return (
-    <div>
+    <div className="bg-[#14151d] min-h-screen text-white antialiased selection:bg-[#00b0f5]/30">
 
       {/* ── ABOVE THE FOLD — rendered immediately, no lazy loading ── */}
       <Nav />
